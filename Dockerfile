@@ -7,7 +7,7 @@ RUN apt-get install -y bash curl file git unzip xz-utils zip libglu1-mesa
 
 # RUN git clone https://github.com/flutter/flutter.git -b ${flutterVersion} /flutter
 
-RUN COPY flutter /flutter
+COPY flutter /flutter
 
 RUN /flutter/bin/flutter precache
 
