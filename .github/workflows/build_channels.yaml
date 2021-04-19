@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        channel: [master, dev, beta, stable]
         include:
           - channel: master
             tags: [master]
