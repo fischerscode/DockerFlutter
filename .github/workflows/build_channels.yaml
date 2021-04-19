@@ -14,7 +14,7 @@ jobs:
           echo "::set-output name=matrix::$(echo $(curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads) $(curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags) | jq '.[]' | jq -s | jq 'map(.ref) | map(sub("refs/heads/"; "")) | map(sub("refs/tags/"; ""))' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')"
       - run: echo ${{ steps.set-refs.outputs.matrix }}
       - run: |
-          echo "::set-output name=SELECTED_COLOR::green"
+          echo "::set-output name=SELECTED_COLOR::$(echo test)"
         id: random-color-generator
       - run: echo ${{ steps.random-color-generator.outputs.SELECTED_COLOR }}
   build:
