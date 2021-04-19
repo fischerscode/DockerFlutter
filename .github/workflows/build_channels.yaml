@@ -13,8 +13,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Pull cache
+        run: docker pull fischerscode/flutter:master || true
       - name: Build image
-        run: docker build . -t fischerscode/flutter:master --cache-from fischerscode/flutter:master --build-arg=flutterVersion=master
+        run: docker build . -t fischerscode/flutter:master --build-arg=flutterVersion=master
       - name: Push image
         run: docker push fischerscode/flutter:master
 
@@ -27,8 +29,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Pull cache
+        run: docker pull fischerscode/flutter:dev || true
       - name: Build image
-        run: docker build . -t fischerscode/flutter:dev --cache-from fischerscode/flutter:dev --build-arg=flutterVersion=dev
+        run: docker build . -t fischerscode/flutter:dev --build-arg=flutterVersion=dev
       - name: Push image
         run: docker push fischerscode/flutter:dev
   build-beta:
@@ -40,8 +44,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Pull cache
+        run: docker pull fischerscode/flutter:beta || true
       - name: Build image
-        run: docker build . -t fischerscode/flutter:beta --cache-from fischerscode/flutter:beta --build-arg=flutterVersion=beta
+        run: docker build . -t fischerscode/flutter:beta --build-arg=flutterVersion=beta
       - name: Push image
         run: docker push fischerscode/flutter:beta
   build-stable:
@@ -53,7 +59,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Pull cache
+        run: docker pull fischerscode/flutter:stable || true
       - name: Build image
-        run: docker build . -t fischerscode/flutter:stable -t fischerscode/flutter:latest --cache-from fischerscode/flutter:stable --build-arg=flutterVersion=stable
+        run: docker build . -t fischerscode/flutter:stable -t fischerscode/flutter:latest --build-arg=flutterVersion=stable
       - name: Push image
-        run: docker push fischerscode/flutter:stable fischerscode/flutter:latest
+        run: |
+          docker push fischerscode/flutter:stable
+          docker push fischerscode/flutter:latest
