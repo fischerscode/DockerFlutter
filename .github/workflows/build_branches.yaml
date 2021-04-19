@@ -1,7 +1,9 @@
-name: Build Channels
+name: Build Branches
 
 on:
   push:
+  schedule:
+    - cron: "0 * * * *"
 
 jobs:
   fetch-branches:
