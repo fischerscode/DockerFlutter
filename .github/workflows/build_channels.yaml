@@ -4,47 +4,56 @@ on:
   push:
 
 jobs:
-  master:
+  build-master:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: whoan/docker-build-with-cache-action@v5
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: "${{ secrets.DOCKERHUB_TOKEN }}"
-          image_name: fischerscode/flutter
-          image_tag: master
-          build_extra_args: "--compress=true --build-arg=flutterVersion=master"
-  dev:
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build image
+        run: docker build . -t fischerscode/flutter:master --cache-from fischerscode/flutter:master --build-arg=flutterVersion=master
+      - name: Push image
+        run: docker push fischerscode/flutter:master
+
+  build-dev:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: whoan/docker-build-with-cache-action@v5
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: "${{ secrets.DOCKERHUB_TOKEN }}"
-          image_name: fischerscode/flutter
-          image_tag: dev
-          build_extra_args: "--compress=true --build-arg=flutterVersion=dev"
-  beta:
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build image
+        run: docker build . -t fischerscode/flutter:dev --cache-from fischerscode/flutter:dev --build-arg=flutterVersion=dev
+      - name: Push image
+        run: docker push fischerscode/flutter:dev
+  build-beta:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: whoan/docker-build-with-cache-action@v5
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: "${{ secrets.DOCKERHUB_TOKEN }}"
-          image_name: fischerscode/flutter
-          image_tag: beta
-          build_extra_args: "--compress=true --build-arg=flutterVersion=beta"
-  stable:
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build image
+        run: docker build . -t fischerscode/flutter:beta --cache-from fischerscode/flutter:beta --build-arg=flutterVersion=beta
+      - name: Push image
+        run: docker push fischerscode/flutter:beta
+  build-stable:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: whoan/docker-build-with-cache-action@v5
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: "${{ secrets.DOCKERHUB_TOKEN }}"
-          image_name: fischerscode/flutter
-          image_tag: stable,latest
-          build_extra_args: "--compress=true --build-arg=flutterVersion=stable"
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build image
+        run: docker build . -t fischerscode/flutter:stable -t fischerscode/flutter:latest --cache-from fischerscode/flutter:stable --build-arg=flutterVersion=stable
+      - name: Push image
+        run: docker push fischerscode/flutter:stable fischerscode/flutter:latest
