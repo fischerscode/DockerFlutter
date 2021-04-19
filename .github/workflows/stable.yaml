@@ -9,53 +9,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: checkout flutter
-        uses: actions/checkout@v2
-        with:
-          repository: flutter/flutter
-          ref: stable
-          path: flutter
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      # - name: Build image
-      #   run: docker build . --file Dockerfile --tag fischerscode/flutter:stable --cache-from fischerscode/flutter
-
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Push to Docker Hub
-      #   run: |
-      #     docker push fischerscode/flutter:stable
-      #     docker tag fischerscode/flutter:stable fischerscode/flutter:latest
-      #     docker push fischerscode/flutter:latest
-
-      - name: Build and push
-        uses: docker/build-push-action@v2
+      - uses: whoan/docker-build-with-cache-action@v5
         with:
-          context: .
-          push: true
-          tags: fischerscode/flutter:stable
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
-        # This ugly bit is necessary if you don't want your cache to grow forever
-        # till it hits GitHub's limit of 5GB.
-        # Temp fix
-        # https://github.com/docker/build-push-action/issues/252
-        # https://github.com/moby/buildkit/issues/1896
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: "${{ secrets.DOCKERHUB_TOKEN }}"
+          image_name: fischerscode/flutter
+          image_tag: stable, latest
+          build_extra_args: "--compress=true --build-arg=flutterVersion=stable"
