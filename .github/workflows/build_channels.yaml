@@ -4,8 +4,20 @@ on:
   push:
 
 jobs:
-  build-master:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        channel: [master, dev, beta, stable]
+        include:
+          - channel: master
+            tags: [master]
+          - channel: dev
+            tags: [dev]
+          - channel: beta
+            tags: [beta]
+          - channel: stable
+            tags: [stable, latest]
     steps:
       - uses: actions/checkout@v2
       - name: setup buildx
@@ -21,80 +33,9 @@ jobs:
       - name: Build and push image
         run: |
           docker build \
-            -t fischerscode/flutter:master \
-            --build-arg=flutterVersion=master \
-            --cache-from=type=registry,ref=fischerscode/flutter-cache:master \
-            --cache-to=type=registry,ref=fischerscode/flutter-cache:master,mode=max \
-            --push \
-            .
-
-  build-dev:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: setup buildx
-        uses: docker/setup-buildx-action@v1
-        id: buildx
-        with:
-          install: true
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push image
-        run: |
-          docker build \
-            -t fischerscode/flutter:dev \
-            --build-arg=flutterVersion=dev \
-            --cache-from=type=registry,ref=fischerscode/flutter-cache:dev \
-            --cache-to=type=registry,ref=fischerscode/flutter-cache:dev,mode=max \
-            --push \
-            .
-  build-beta:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: setup buildx
-        uses: docker/setup-buildx-action@v1
-        id: buildx
-        with:
-          install: true
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push image
-        run: |
-          docker build \
-            -t fischerscode/flutter:beta \
-            --build-arg=flutterVersion=beta \
-            --cache-from=type=registry,ref=fischerscode/flutter-cache:beta \
-            --cache-to=type=registry,ref=fischerscode/flutter-cache:beta,mode=max \
-            --push \
-            .
-  build-stable:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: setup buildx
-        uses: docker/setup-buildx-action@v1
-        id: buildx
-        with:
-          install: true
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push image
-        run: |
-          docker build \
-            -t fischerscode/flutter:stable \
-            -t fischerscode/flutter:latest \
-            --build-arg=flutterVersion=stable \
-            --cache-from=type=registry,ref=fischerscode/flutter-cache:stable \
-            --cache-to=type=registry,ref=fischerscode/flutter-cache:stable,mode=max \
+            $(for i in "${{ matrix.tags }}"; do echo -t fischerscode/flutter:$i; done) \
+            --build-arg=flutterVersion=${{ matrix.channel }} \
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:${{ matrix.channel }} \
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:${{ matrix.channel }},mode=max \
             --push \
             .
