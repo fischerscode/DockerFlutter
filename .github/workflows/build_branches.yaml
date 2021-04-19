@@ -24,9 +24,10 @@ jobs:
       matrix: ${{fromJson(needs.fetch-branches.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
       - name: setup buildx
         uses: docker/setup-buildx-action@v1
-        id: buildx
         with:
           install: true
       - name: Login to Docker Hub
