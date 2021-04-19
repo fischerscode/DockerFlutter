@@ -4,24 +4,19 @@ on:
   push:
 
 jobs:
-  fetch-refs:
+  fetch-branches:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.fetch-refs.outputs.matrix }}
     steps:
       - id: fetch-refs
         run: |
-          echo "::set-output name=matrix::$(echo $(curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads) $(curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags) | jq '.[]' | jq -s | jq 'map(.ref) | map(sub("refs/heads/"; "")) | map(sub("refs/tags/"; ""))' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')"
-      - run: echo ${{ fromJson(steps.fetch-refs.outputs.matrix) }}
-      - run: |
-          echo "::set-output name=SELECTED_COLOR::$(echo test)"
-        id: random-color-generator
-      - run: echo ${{ steps.random-color-generator.outputs.SELECTED_COLOR }}
-  build:
-    needs: fetch-refs
+          echo "::set-output name=matrix::$(echo $(curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads) | jq 'map(.ref) | map(sub("refs/heads/"; "")) | map(sub("refs/tags/"; ""))' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')"
+  build-branches:
+    needs: fetch-branches
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJson(needs.fetch-refs.outputs.matrix)}}
+      matrix: ${{fromJson(needs.fetch-branches.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v2
       - name: setup buildx
