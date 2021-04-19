@@ -1,0 +1,50 @@
+name: Build Channels
+
+on:
+  push:
+
+jobs:
+  master:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: whoan/docker-build-with-cache-action@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: "${{ secrets.DOCKERHUB_TOKEN }}"
+          image_name: fischerscode/flutter
+          image_tag: master
+          build_extra_args: "--compress=true --build-arg=flutterVersion=master"
+  dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: whoan/docker-build-with-cache-action@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: "${{ secrets.DOCKERHUB_TOKEN }}"
+          image_name: fischerscode/flutter
+          image_tag: dev
+          build_extra_args: "--compress=true --build-arg=flutterVersion=dev"
+  beta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: whoan/docker-build-with-cache-action@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: "${{ secrets.DOCKERHUB_TOKEN }}"
+          image_name: fischerscode/flutter
+          image_tag: beta
+          build_extra_args: "--compress=true --build-arg=flutterVersion=beta"
+  stable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: whoan/docker-build-with-cache-action@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: "${{ secrets.DOCKERHUB_TOKEN }}"
+          image_name: fischerscode/flutter
+          image_tag: stable,latest
+          build_extra_args: "--compress=true --build-arg=flutterVersion=stable"
