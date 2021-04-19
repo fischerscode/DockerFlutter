@@ -4,17 +4,11 @@ on:
   push:
 
 jobs:
-  docker:
+  stable:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: checkout flutter
-        uses: actions/checkout@v2
-        with:
-          repository: flutter/flutter
-          ref: stable
-          path: flutter
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -33,5 +27,6 @@ jobs:
           push: false
           cache-from: type=registry,ref=fischerscode/flutter:stable
           tags: fischerscode/flutter:stable, fischerscode/flutter:latest
+          build-args: flutterVersion=stable
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
