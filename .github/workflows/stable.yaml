@@ -26,7 +26,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: false
           cache-from: type=registry,ref=fischerscode/flutter:stable
-          tags: fischerscode/flutter:stable, fischerscode/flutter:latest
+          tags: fischerscode/flutter:stable
           build-args: flutterVersion=stable
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
