@@ -19,13 +19,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
-        run: >
-          docker build
-            -t fischerscode/flutter:master
-            --build-arg=flutterVersion=master
-            --cache-from=type=registry,ref=fischerscode/flutter-cache:master
-            --cache-to=type=registry,ref=fischerscode/flutter-cache:master,mode=max
-            --push
+        run: |
+          docker build \
+            -t fischerscode/flutter:master \
+            --build-arg=flutterVersion=master \
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:master \
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:master,mode=max \
+            --push \
             .
 
   build-dev:
@@ -43,13 +43,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
-        run: >
-          docker build
-            -t fischerscode/flutter:dev
-            --build-arg=flutterVersion=dev
-            --cache-from=type=registry,ref=fischerscode/flutter-cache:dev
-            --cache-to=type=registry,ref=fischerscode/flutter-cache:dev,mode=max
-            --push
+        run: |
+          docker build \
+            -t fischerscode/flutter:dev \
+            --build-arg=flutterVersion=dev \
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:dev \
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:dev,mode=max \
+            --push \
             .
   build-beta:
     runs-on: ubuntu-latest
@@ -66,13 +66,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
-        run: >
-          docker build
-            -t fischerscode/flutter:beta
-            --build-arg=flutterVersion=beta
-            --cache-from=type=registry,ref=fischerscode/flutter-cache:beta
-            --cache-to=type=registry,ref=fischerscode/flutter-cache:beta,mode=max
-            --push
+        run: |
+          docker build \
+            -t fischerscode/flutter:beta \
+            --build-arg=flutterVersion=beta \
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:beta \
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:beta,mode=max \
+            --push \
             .
   build-stable:
     runs-on: ubuntu-latest
@@ -89,12 +89,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
-        run: >
-          docker build
-            -t fischerscode/flutter:stable
-            -t fischerscode/flutter:latest
-            --build-arg=flutterVersion=stable
-            --cache-from=type=registry,ref=fischerscode/flutter-cache:stable
-            --cache-to=type=registry,ref=fischerscode/flutter-cache:stable,mode=max
-            --push
+        run: |
+          docker build \
+            -t fischerscode/flutter:stable \
+            -t fischerscode/flutter:latest \
+            --build-arg=flutterVersion=stable \
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:stable \
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:stable,mode=max \
+            --push \
             .
