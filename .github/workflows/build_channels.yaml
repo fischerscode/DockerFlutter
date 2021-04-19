@@ -33,7 +33,7 @@ jobs:
       - name: Build and push image
         run: |
           docker build \
-            $(for i in "${{ matrix.tags }}"; do echo -t fischerscode/flutter:$i; done) \
+            -t fischerscode/flutter:${{ join(matrix.tags, ' -t fischerscode/flutter:') }}
             --build-arg=flutterVersion=${{ matrix.channel }} \
             --cache-from=type=registry,ref=fischerscode/flutter-cache:${{ matrix.channel }} \
             --cache-to=type=registry,ref=fischerscode/flutter-cache:${{ matrix.channel }},mode=max \
