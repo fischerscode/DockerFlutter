@@ -8,62 +8,89 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: setup buildx
+        uses: docker/setup-buildx-action@v1
+        id: buildx
+        with:
+          install: true
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Pull cache
-        run: docker pull fischerscode/flutter:master || true
-      - name: Build image
-        run: docker build . -t fischerscode/flutter:master --build-arg=flutterVersion=master
-      - name: Push image
-        run: docker push fischerscode/flutter:master
+      - name: Build and push image
+        run: >
+          docker build . 
+            -t fischerscode/flutter:master
+            --build-arg=flutterVersion=master
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:master
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:master,mode=max
+            --push
 
   build-dev:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: setup buildx
+        uses: docker/setup-buildx-action@v1
+        id: buildx
+        with:
+          install: true
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Pull cache
-        run: docker pull fischerscode/flutter:dev || true
-      - name: Build image
-        run: docker build . -t fischerscode/flutter:dev --build-arg=flutterVersion=dev
-      - name: Push image
-        run: docker push fischerscode/flutter:dev
+      - name: Build and push image
+        run: >
+          docker build . 
+            -t fischerscode/flutter:dev
+            --build-arg=flutterVersion=dev
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:dev
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:dev,mode=max
+            --push
   build-beta:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: setup buildx
+        uses: docker/setup-buildx-action@v1
+        id: buildx
+        with:
+          install: true
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Pull cache
-        run: docker pull fischerscode/flutter:beta || true
-      - name: Build image
-        run: docker build . -t fischerscode/flutter:beta --build-arg=flutterVersion=beta
-      - name: Push image
-        run: docker push fischerscode/flutter:beta
+      - name: Build and push image
+        run: >
+          docker build . 
+            -t fischerscode/flutter:beta
+            --build-arg=flutterVersion=beta
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:beta
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:beta,mode=max
+            --push
   build-stable:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: setup buildx
+        uses: docker/setup-buildx-action@v1
+        id: buildx
+        with:
+          install: true
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Pull cache
-        run: docker pull fischerscode/flutter:stable || true
-      - name: Build image
-        run: docker build . -t fischerscode/flutter:stable -t fischerscode/flutter:latest --build-arg=flutterVersion=stable
-      - name: Push image
-        run: |
-          docker push fischerscode/flutter:stable
-          docker push fischerscode/flutter:latest
+      - name: Build and push image
+        run: >
+          docker build . 
+            -t fischerscode/flutter:stable
+            -t fischerscode/flutter:latest
+            --build-arg=flutterVersion=stable
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:stable
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:stable,mode=max
+            --push
