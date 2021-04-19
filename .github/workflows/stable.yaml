@@ -9,6 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: checkout flutter
+        uses: actions/checkout@v2
+        with:
+          repository: flutter/flutter
+          ref: stable
+          path: flutter
+
       - name: Build image
         run: docker build . --file Dockerfile --tag fischerscode/flutter:stable --build-arg flutterVersion=stable
 

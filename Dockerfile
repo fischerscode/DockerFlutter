@@ -3,11 +3,8 @@ FROM ubuntu:20.04
 RUN apt-get update
 
 RUN apt-get install -y bash curl file git unzip xz-utils zip libglu1-mesa
-ARG flutterVersion=stable
 
-RUN git clone https://github.com/flutter/flutter.git -b ${flutterVersion} /flutter --depth 1
-
-RUN /flutter/bin/flutter channel ${flutterVersion}
+COPY flutter /flutter
 
 RUN /flutter/bin/flutter precache
 
