@@ -10,7 +10,7 @@ jobs:
   fetch-branches:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.fetch-refs.outputs.matrix }}
+      matrix: ${{ steps.fetch-branches.outputs.matrix }}
     steps:
       - id: fetch-branches
         run: |
