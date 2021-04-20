@@ -21,7 +21,7 @@ jobs:
           cat dockerhub-tags.json ignored_tags.json | jq -s 'map(.[])' > existing-tags.json
           curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[]' > availiable_tags.json
           curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads | jq 'map(.ref) | map(sub("refs/heads/"; "")) | .[]' > availiable_branches.json
-          matrix=$(cat availiable_tags.json availiable_branches.json | jq -s | xargs -L1 -I TAG sh -c "cat existing-tags.json | jq 'select(all(.[]; .==(\"TAG\" | sub(\"\\\\+\"; \"_\"; \"g\")) | not)) | \"TAG\"'" | jq -s '.[:20]' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
+          matrix=$(cat availiable_tags.json availiable_branches.json | xargs -L1 -I TAG sh -c "cat existing-tags.json | jq 'select(all(.[]; .==(\"TAG\" | sub(\"\\\\+\"; \"_\"; \"g\")) | not)) | \"TAG\"'" | jq -s '.[:20]' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
           echo "::set-output name=matrix::$matrix"
       - name: Check matrix
         id: check-matrix
