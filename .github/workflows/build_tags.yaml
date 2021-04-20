@@ -16,7 +16,7 @@ jobs:
         run: |
           dockerApiToken="$(curl --silent --get --data-urlencode service=registry.docker.io --data-urlencode scope=repository:fischerscode/flutter:pull https://auth.docker.io/token | jq --raw-output '.token')"
           curl --silent --get -H "Accept: application/json" -H "Authorization: Bearer $dockerApiToken" https://registry-1.docker.io/v2/fischerscode/flutter/tags/list | jq '.tags' > dockerhub-tags.json
-          matrix=$(curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[]' | xargs -L1 -I TAG sh -c "cat dockerhub-tags.json | jq 'select(all(.[]; .==\"TAG\" | not)) | \"TAG\"'" | jq -s '.[:20] | map(sub("\\+"; "_"; "g"))' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
+          matrix=$(curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[]' | xargs -L1 -I TAG sh -c "cat dockerhub-tags.json | jq 'select(all(.[]; .==\"TAG\" | not)) | \"TAG\"'" | jq -s '.[:20]' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
           echo "::set-output name=matrix::$matrix"
   build-tags:
     needs: fetch-tags
