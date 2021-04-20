@@ -13,6 +13,7 @@ jobs:
       matrix: ${{ steps.fetch-refs.outputs.matrix }}
       empty_matrix: ${{ steps.check-matrix.outputs.empty_matrix }}
     steps:
+      - uses: actions/checkout@v2
       - id: fetch-refs
         run: |
           dockerApiToken="$(curl --silent --get --data-urlencode service=registry.docker.io --data-urlencode scope=repository:fischerscode/flutter:pull https://auth.docker.io/token | jq --raw-output '.token')"
