@@ -1,4 +1,4 @@
-name: Build Branches
+name: Build Active Branches
 
 on:
   push:
