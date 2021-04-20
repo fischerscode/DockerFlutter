@@ -11,15 +11,21 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.fetch-refs.outputs.matrix }}
+      empty_matrix: ${{ steps.check-matrix.outputs.empty_matrix }}
     steps:
       - id: fetch-refs
         run: |
           curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads > heads.json
           matrix=$(curl -s https://api.github.com/repos/flutter/flutter/commits | jq 'map(.sha) | .[]' | xargs -L1 -I KEY sh -c "cat heads.json | jq '.[] | select(.object.sha==\"KEY\")'" | jq -s 'map(.ref) | map(sub("refs/heads/"; "")) + ["master", "dev", "beta", "stable"] | unique' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
           echo "::set-output name=matrix::$matrix"
+      - name: Check matrix
+        id: check-matrix
+        run: |
+          echo "::set-output name=empty_matrix::$(echo '${{ steps.fetch-branches.outputs.matrix }}' | jq '.channel | length > 0' | not)"
   build-branches:
     needs: fetch-branches
     runs-on: ubuntu-latest
+    if: ${{ needs.fetch-branches.outputs.empty_matrix == 'false' }}
     strategy:
       matrix: ${{fromJson(needs.fetch-branches.outputs.matrix)}}
       fail-fast: false

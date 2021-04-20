@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.fetch-refs.outputs.matrix }}
+      empty_matrix: ${{ steps.check-matrix.outputs.empty_matrix }}
     steps:
       - id: fetch-refs
         run: |
@@ -18,9 +19,14 @@ jobs:
           curl --silent --get -H "Accept: application/json" -H "Authorization: Bearer $dockerApiToken" https://registry-1.docker.io/v2/fischerscode/flutter/tags/list | jq '.tags' > dockerhub-tags.json
           matrix=$(curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[]' | xargs -L1 -I TAG sh -c "cat dockerhub-tags.json | jq 'select(all(.[]; .==\"TAG\" | not)) | \"TAG\"'" | jq -s '.[:20]' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
           echo "::set-output name=matrix::$matrix"
+      - name: Check matrix
+        id: check-matrix
+        run: |
+          echo "::set-output name=empty_matrix::$(echo '${{ steps.fetch-branches.outputs.matrix }}' | jq '.channel | length > 0' | not)"
   build-tags:
     needs: fetch-tags
     runs-on: ubuntu-latest
+    if: ${{ needs.fetch-tags.outputs.empty_matrix == 'false' }}
     strategy:
       matrix: ${{fromJson(needs.fetch-tags.outputs.matrix)}}
       fail-fast: false
