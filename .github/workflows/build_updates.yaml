@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix: ${{fromJson(needs.fetch-branches.outputs.matrix)}}
       fail-fast: false
-    if: needs.fetch-branches.outputs.matrix.channel[0] != null
+    if: needs.fetch-branches.outputs.matrix.count >= 1
     steps:
       - uses: actions/checkout@v2
       - name: setup buildx
