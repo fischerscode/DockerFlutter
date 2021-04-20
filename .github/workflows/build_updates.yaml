@@ -21,7 +21,7 @@ jobs:
       - name: Check matrix
         id: check-matrix
         run: |
-          echo "::set-output name=empty_matrix::$(echo '${{ steps.fetch-refs.outputs.matrix }}' | jq '.channel | length > 0' | not)"
+          echo "::set-output name=empty_matrix::$(echo '${{ steps.fetch-refs.outputs.matrix }}' | jq '.channel | length > 0 | not')"
   build-branches:
     needs: fetch-branches
     runs-on: ubuntu-latest
