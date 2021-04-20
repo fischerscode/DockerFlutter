@@ -2,12 +2,12 @@ name: Docker Hub Description
 
 on:
   workflow_dispatch:
-#   push:
-#     branches:
-#       - master
-#     paths:
-#       - README.md
-#       - .github/workflows/dockerhub_description.yaml
+  push:
+    branches:
+      - master
+    paths:
+      - README.md
+      - .github/workflows/dockerhub_description.yaml
 
 jobs:
   dockerHubDescription:
