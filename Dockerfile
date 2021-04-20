@@ -18,7 +18,7 @@ RUN git clone https://github.com/flutter/flutter.git -b ${flutterVersion} flutte
 
 RUN flutter-sdk/bin/flutter precache
 
-RUN flutter config --no-analytics
+RUN flutter-sdk/bin/flutter config --no-analytics
 
 ENV PATH="$PATH:/home/flutter/flutter-sdk/bin"
 ENV PATH="$PATH:/home/flutter/flutter-sdk/bin/cache/dart-sdk/bin"
