@@ -23,6 +23,7 @@ jobs:
         id: check-matrix
         run: |
           echo "::set-output name=empty_matrix::$(echo '${{ steps.fetch-branches.outputs.matrix }}' | jq '.channel | length > 0')"
+      - run: echo '${{ steps.fetch-branches.outputs.matrix }}' | jq '.channel | length > 0'
   build-branches:
     needs: fetch-branches
     runs-on: ubuntu-latest
