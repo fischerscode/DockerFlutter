@@ -11,21 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.fetch-refs.outputs.matrix }}
-      count: ${{ steps.fetch-branches.outputs.count }}
     steps:
       - id: fetch-refs
         run: |
           curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads > heads.json
           matrix=$(curl -s https://api.github.com/repos/flutter/flutter/commits | jq 'map(.sha) | .[]' | xargs -L1 -I KEY sh -c "cat heads.json | jq '.[] | select(.object.sha==\"KEY\")'" | jq -s 'map(.ref) | map(sub("refs/heads/"; "")) + ["master", "dev", "beta", "stable"] | unique' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
           echo "::set-output name=matrix::$matrix"
-          echo "::set-output name=count::$(echo $matrix | jq '.channel | length')"
   build-branches:
     needs: fetch-branches
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{fromJson(needs.fetch-branches.outputs.matrix)}}
       fail-fast: false
-    if: needs.fetch-branches.outputs.matrix.count >= 1
     steps:
       - uses: actions/checkout@v2
       - name: setup buildx
