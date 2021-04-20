@@ -1,9 +1,9 @@
-name: Build Missing Branches
+name: Build Updates
 
 on:
   push:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -12,18 +12,16 @@ jobs:
     outputs:
       matrix: ${{ steps.fetch-refs.outputs.matrix }}
     steps:
-      - id: fetch-branches
+      - id: fetch-refs
         run: |
-          dockerApiToken="$(curl --silent --get --data-urlencode service=registry.docker.io --data-urlencode scope=repository:fischerscode/flutter:pull https://auth.docker.io/token | jq --raw-output '.token')"
-          curl --silent --get -H "Accept: application/json" -H "Authorization: Bearer $dockerApiToken" https://registry-1.docker.io/v2/fischerscode/flutter/tags/list | jq '.tags' > dockerhub-tags.json
-          matrix=$(curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads | jq 'map(.ref) | map(sub("refs/heads/"; "")) | .[]' | xargs -L1 -I TAG sh -c "cat dockerhub-tags.json | jq 'select(all(.[]; .==\"TAG\" | not)) | \"TAG\"'" | jq -s '.[:20]' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
+          curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads > heads.json
+          matrix=$(curl -s https://api.github.com/repos/flutter/flutter/commits | jq 'map(.sha) | .[]' | xargs -L1 -I KEY sh -c "cat heads.json | jq '.[] | select(.object.sha==\"KEY\")'" | jq -s 'map(.ref) | map(sub("refs/heads/"; "")) + ["master", "dev", "beta", "stable"] | unique' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
           echo "::set-output name=matrix::$matrix"
   build-branches:
     needs: fetch-branches
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{fromJson(needs.fetch-branches.outputs.matrix)}}
-      fail-fast: false
     steps:
       - uses: actions/checkout@v2
       - name: setup buildx
@@ -44,5 +42,4 @@ jobs:
             --cache-to=type=registry,ref=fischerscode/flutter-cache:${{ matrix.channel }},mode=max \
             --push \
             --platform linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x \
-            -f Dockerfile.tags \
             .
