@@ -36,10 +36,10 @@ jobs:
       - name: Build and push image
         run: |
           docker build \
-            -t fischerscode/flutter:${{ join(matrix.tags, ' -t fischerscode/flutter:') }} \
+            -t fischerscode/flutter:$(${{ join(matrix.tags, ' | tr + _) -t fischerscode/flutter:$(') }} | tr + _) \
             --build-arg=flutterVersion=${{ matrix.channel }} \
-            --cache-from=type=registry,ref=fischerscode/flutter-cache:${{ matrix.channel }} \
-            --cache-to=type=registry,ref=fischerscode/flutter-cache:${{ matrix.channel }},mode=max \
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:$(${{ matrix.channel }} | tr + _) \
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:$(${{ matrix.channel }} | tr + _),mode=max \
             --push \
             --platform linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x \
             .
