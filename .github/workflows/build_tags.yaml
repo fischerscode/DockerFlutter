@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix: ${{fromJson(needs.fetch-tags.outputs.matrix)}}
       fail-fast: false
-    if: ${{ needs.fetch-tags.outputs.matrix.channel[0] != null }}
+    if: needs.fetch-tags.outputs.matrix.channel[0] != null
     steps:
       - uses: actions/checkout@v2
       - name: setup buildx
