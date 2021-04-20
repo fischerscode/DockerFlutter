@@ -1,4 +1,4 @@
-name: Build Missing Branches
+name: Build Missing Tags and Branches
 
 on:
   push:
@@ -7,30 +7,32 @@ on:
   workflow_dispatch:
 
 jobs:
-  fetch-branches:
+  fetch:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.fetch-branches.outputs.matrix }}
+      matrix: ${{ steps.fetch.outputs.matrix }}
       empty_matrix: ${{ steps.check-matrix.outputs.empty_matrix }}
     steps:
       - uses: actions/checkout@v2
-      - id: fetch-branches
+      - id: fetch
         run: |
           dockerApiToken="$(curl --silent --get --data-urlencode service=registry.docker.io --data-urlencode scope=repository:fischerscode/flutter:pull https://auth.docker.io/token | jq --raw-output '.token')"
           curl --silent --get -H "Accept: application/json" -H "Authorization: Bearer $dockerApiToken" https://registry-1.docker.io/v2/fischerscode/flutter/tags/list | jq '.tags' > dockerhub-tags.json
-          cat dockerhub-tags.json ignored_branches.json | jq -s 'map(.[])' > existing-tags.json
-          matrix=$(curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads | jq 'map(.ref) | map(sub("refs/heads/"; "")) | .[]' | xargs -L1 -I TAG sh -c "cat existing-tags.json | jq 'select(all(.[]; .==(\"TAG\" | sub(\"\\\\+\"; \"_\"; \"g\")) | not)) | \"TAG\"'" | jq -s '.[:20]' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
+          cat dockerhub-tags.json ignored_tags.json | jq -s 'map(.[])' > existing-tags.json
+          curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[]' > availiable_tags.json
+          curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads | jq 'map(.ref) | map(sub("refs/heads/"; "")) | .[]' > availiable_branches.json
+          matrix=$(cat availiable_tags.json availiable_branches.json | jq -s | xargs -L1 -I TAG sh -c "cat existing-tags.json | jq 'select(all(.[]; .==(\"TAG\" | sub(\"\\\\+\"; \"_\"; \"g\")) | not)) | \"TAG\"'" | jq -s '.[:20]' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
           echo "::set-output name=matrix::$matrix"
       - name: Check matrix
         id: check-matrix
         run: |
-          echo "::set-output name=empty_matrix::$(echo '${{ steps.fetch-branches.outputs.matrix }}' | jq '.channel | length > 0 | not')"
-  build-branches:
-    needs: fetch-branches
+          echo "::set-output name=empty_matrix::$(echo '${{ steps.fetch.outputs.matrix }}' | jq '.channel | length > 0 | not')"
+  build:
+    needs: fetch
     runs-on: ubuntu-latest
-    if: ${{ needs.fetch-branches.outputs.empty_matrix == 'false' }}
+    if: ${{ needs.fetch.outputs.empty_matrix == 'false' }}
     strategy:
-      matrix: ${{fromJson(needs.fetch-branches.outputs.matrix)}}
+      matrix: ${{fromJson(needs.fetch.outputs.matrix)}}
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
