@@ -24,9 +24,9 @@ jobs:
     needs: fetch-branches
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJson(needs.fetch-branches.outputs.matrix.channel)}}
+      matrix: ${{fromJson(needs.fetch-branches.outputs.matrix)}}
       fail-fast: false
-    if: needs.fetch-branches.outputs.matrix.count >= 1
+    if: needs.fetch-branches.outputs.matrix.channel[0] != null
     steps:
       - uses: actions/checkout@v2
       - name: setup buildx
