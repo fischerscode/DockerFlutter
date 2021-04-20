@@ -1,0 +1,19 @@
+# This is needed for really old tags
+FROM --platform=$BUILDPLATFORM ubuntu:20.04
+
+RUN apt-get update
+
+RUN apt-get install -y bash curl file git unzip xz-utils zip libglu1-mesa
+
+ARG flutterVersion=stable
+
+ADD https://api.github.com/repos/flutter/flutter/compare/${flutterVersion}...${flutterVersion} /dev/null
+
+RUN git clone https://github.com/flutter/flutter.git -b ${flutterVersion} /flutter --depth 1 
+
+RUN if [ -f "/flutter/bin/dart"]; then /flutter/bin/flutter; fi 
+
+ENV PATH="$PATH:/flutter/bin"
+ENV PATH="$PATH:/flutter/bin/cache/dart-sdk/bin"
+
+RUN if [ -f "/flutter/bin/dart"]; then flutter doctor; fi 

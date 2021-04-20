@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{fromJson(needs.fetch-tags.outputs.matrix)}}
+      fail-fast: false
     steps:
       - uses: actions/checkout@v2
       - name: setup buildx
@@ -44,4 +45,5 @@ jobs:
             --cache-to=type=registry,ref=fischerscode/flutter-cache:${{ matrix.channel }},mode=max \
             --push \
             --platform linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x \
+            -f Dockerfile.tags \
             .
