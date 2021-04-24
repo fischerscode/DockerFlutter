@@ -12,3 +12,13 @@ Currently every new branch and new tag of the [flutter repo](https://github.com/
 Additionally at least every hour the latest 30 commits are checked and the branches of those rebuild.
 
 The every image in the [stable branch](https://github.com/flutter/flutter/tree/stable) is additionally uploaded with the latest tag.
+
+Most important should be this tags:
+
+|  tag   |       description        |
+| :----: | :----------------------: |
+| latest | Flutters stable channel. |
+| stable | Flutters stable channel. |
+|  beta  |  Flutters beta channel.  |
+|  dev   |  Flutters dev channel.   |
+| master | Flutters master channel. |
