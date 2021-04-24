@@ -16,7 +16,7 @@ jobs:
       - id: fetch-refs
         run: |
           curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads > heads.json
-          matrix=$(curl -s https://api.github.com/repos/flutter/flutter/commits | jq 'map(.sha) | .[]' | xargs -L1 -I KEY sh -c "cat heads.json | jq '.[] | select(.object.sha==(\"KEY\" | sub(\"\\\\+\"; \"_\"; \"g\")))'" | jq -s 'map(.ref) | map(sub("refs/heads/"; "")) + ["master", "dev", "beta", "stable"] | unique' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
+          matrix=$(curl -s https://api.github.com/repos/flutter/flutter/commits | jq 'map(.sha) | .[]' | xargs -L1 -I KEY sh -c "cat heads.json | jq '.[] | select(.object.sha==(\"KEY\" | sub(\"\\\\+\"; \"_\"; \"g\")))'" | jq -s 'map(.ref) | map(sub("refs/heads/"; ""))' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
           echo "::set-output name=matrix::$matrix"
       - name: Check matrix
         id: check-matrix
