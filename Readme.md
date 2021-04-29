@@ -9,7 +9,7 @@ One use case for this image is the build of Flutter Web Applications.
 ## Tags
 Currently every new branch and new tag of the [flutter repo](https://github.com/flutter/flutter) gets build.
 
-Additionally at least every hour the latest 30 commits are checked and the branches of those rebuild.
+Additionally at least every hour the 20 most recently updated branches are build.
 
 The every image in the [stable branch](https://github.com/flutter/flutter/tree/stable) is additionally uploaded with the latest tag.
 

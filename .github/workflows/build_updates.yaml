@@ -13,10 +13,15 @@ jobs:
       matrix: ${{ steps.fetch-refs.outputs.matrix }}
       empty_matrix: ${{ steps.check-matrix.outputs.empty_matrix }}
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          repository: flutter/flutter
+          path: flutter
+      - run: for remote in `git -C flutter branch -r`; do git -C flutter branch --track ${remote#origin/} $remote | true; done
       - id: fetch-refs
         run: |
-          curl -s https://api.github.com/repos/flutter/flutter/git/refs/heads > heads.json
-          matrix=$(curl -s https://api.github.com/repos/flutter/flutter/commits | jq 'map(.sha) | .[]' | xargs -L1 -I KEY sh -c "cat heads.json | jq '.[] | select(.object.sha==(\"KEY\" | sub(\"\\\\+\"; \"_\"; \"g\")))'" | jq -s 'map(.ref) | map(sub("refs/heads/"; ""))' | jq -c '{channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
+          matrix=$(git -C flutter for-each-ref --sort=-committerdate refs/heads/ | sed 's/^.*commit.\(.*\)/"\1"/g' | jq -s 'map(sub("refs/heads/"; "")) | .[:20] | {channel: . , include: map({channel:  . , tags: [ if . == "stable" then ., "latest" else . end ]})}')
           echo "::set-output name=matrix::$matrix"
       - name: Check matrix
         id: check-matrix
