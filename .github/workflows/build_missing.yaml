@@ -1,7 +1,6 @@
 name: Build Missing Tags and Branches
 
 on:
-  push:
   schedule:
     - cron: "30 * * * *"
   workflow_dispatch:
