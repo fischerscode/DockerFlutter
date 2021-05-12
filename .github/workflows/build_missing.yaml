@@ -12,7 +12,7 @@ jobs:
       matrix: ${{ steps.fetch.outputs.matrix }}
       empty_matrix: ${{ steps.check-matrix.outputs.empty_matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
       - id: fetch
         run: |
           dockerApiToken="$(curl --silent --get --data-urlencode service=registry.docker.io --data-urlencode scope=repository:fischerscode/flutter:pull https://auth.docker.io/token | jq --raw-output '.token')"
@@ -34,7 +34,7 @@ jobs:
       matrix: ${{fromJson(needs.fetch.outputs.matrix)}}
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
       - name: setup buildx
         uses: docker/setup-buildx-action@v1.3.0
         with:
