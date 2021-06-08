@@ -14,7 +14,7 @@ ARG flutterVersion=stable
 
 ADD https://api.github.com/repos/flutter/flutter/compare/${flutterVersion}...${flutterVersion} /dev/null
 
-RUN git clone https://github.com/flutter/flutter.git -b ${flutterVersion} flutter-sdk --depth 1 
+RUN git clone https://github.com/flutter/flutter.git -b ${flutterVersion} flutter-sdk
 
 RUN flutter-sdk/bin/flutter precache
 
