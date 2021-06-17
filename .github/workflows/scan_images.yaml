@@ -16,7 +16,9 @@ jobs:
         with:
           name: scanned-tags
       - run: mv scanned-tags/scanned-tags.json scanned-tags.json
+        if: succeeded() || failed()
       - id: fetch
+        if: succeeded() || failed()
         run: |
           dockerApiToken="$(curl --silent --get --data-urlencode service=registry.docker.io --data-urlencode scope=repository:fischerscode/flutter:pull https://auth.docker.io/token | jq --raw-output '.token')"
           curl --silent --get -H "Accept: application/json" -H "Authorization: Bearer $dockerApiToken" https://registry-1.docker.io/v2/fischerscode/flutter/tags/list | jq '.tags' > dockerhub-tags.json
