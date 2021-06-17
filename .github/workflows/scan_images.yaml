@@ -58,6 +58,8 @@ jobs:
       - name: Mark image as scanned
         if: steps.fetch.outputs.tag != 'null'
         run: |
+          echo old:
           cat scanned-tags.json
-          cat scanned-tags.json | jq '. += [${{ steps.fetch.outputs.tag }}]' > scanned-tags.json
+          echo $(cat scanned-tags.json | jq '. += [${{ steps.fetch.outputs.tag }}]') > scanned-tags.json
+          echo new:
           cat scanned-tags.json
