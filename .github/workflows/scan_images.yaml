@@ -2,7 +2,7 @@ name: Scan for invalid builds (pr6)
 
 on:
   schedule:
-    - cron: "5 * * * *"
+    - cron: "* * * * *"
   workflow_dispatch:
 
 jobs:
@@ -57,4 +57,4 @@ jobs:
             .
       - name: Mark image as scanned
         if: steps.fetch.outputs.tag != 'null'
-        run: cat scanned-tags.json | jq '. += ["${{ steps.fetch.outputs.tag }}"]' > scanned-tags.json
+        run: cat scanned-tags.json | jq '. += [${{ steps.fetch.outputs.tag }}]' > scanned-tags.json
