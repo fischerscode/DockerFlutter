@@ -15,7 +15,13 @@ jobs:
         uses: actions/cache@v2
         with:
           path: scanned-tags.json
-          key: scanned-tags-pr6
+          key: scanned-tags-pr6-${{ github.run_number }}
+          restore-keys: |
+            scanned-tags-pr6-${{ github.run_number - 1 }}
+            scanned-tags-pr6-${{ github.run_number - 2 }}
+            scanned-tags-pr6-${{ github.run_number - 3 }}
+            scanned-tags-pr6-${{ github.run_number - 4 }}
+            scanned-tags-pr6-${{ github.run_number - 5 }}
       - if: steps.cache.outputs.cache-hit != 'true'
         run: echo "[]" > scanned-tags.json
       - id: fetch
