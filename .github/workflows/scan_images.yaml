@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - run: echo "[]" > scanned-tags.json
+      - run: echo "[]" > rebuild-tags.json
       - name: Download scanned-tags
         uses: dawidd6/action-download-artifact@v2
         continue-on-error: true
@@ -63,14 +64,14 @@ jobs:
             .
       - name: Mark image as scanned
         if: steps.fetch.outputs.tag != 'null'
-        run: |
-          echo old:
-          cat scanned-tags.json
-          echo $(cat scanned-tags.json | jq '. += [${{ steps.fetch.outputs.tag }}]') > scanned-tags.json
-          echo new:
-          cat scanned-tags.json
+        run: echo $(cat scanned-tags.json | jq '. += [${{ steps.fetch.outputs.tag }}]') > scanned-tags.json
+      - name: Mark image as rebuild
+        if: steps.fetch.outputs.tag != 'null' && steps.invalid.outputs.invalid == 'true'
+        run: echo $(cat rebuild-tags.json | jq '. += [${{ steps.fetch.outputs.tag }}]') > rebuild-tags.json
       - name: Upload tags as artifact
         uses: actions/upload-artifact@v2
         with:
           name: pr6
-          path: scanned-tags.json
+          path: |
+            scanned-tags.json
+            rebuild-tags.json
