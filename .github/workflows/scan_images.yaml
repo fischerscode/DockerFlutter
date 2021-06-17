@@ -15,10 +15,14 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: scanned-tags
+      - name: Initiate tags artifact
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: scanned-tags
+          path: scanned-tags.json
       - run: mv scanned-tags/scanned-tags.json scanned-tags.json
-        if: success() || failure()
       - id: fetch
-        if: success() || failure()
         run: |
           dockerApiToken="$(curl --silent --get --data-urlencode service=registry.docker.io --data-urlencode scope=repository:fischerscode/flutter:pull https://auth.docker.io/token | jq --raw-output '.token')"
           curl --silent --get -H "Accept: application/json" -H "Authorization: Bearer $dockerApiToken" https://registry-1.docker.io/v2/fischerscode/flutter/tags/list | jq '.tags' > dockerhub-tags.json
