@@ -1,0 +1,54 @@
+name: Scan for invalid builds (pr6)
+
+on:
+  schedule:
+    - cron: "5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Cache Tags
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: scanned-tags.json
+          key: scanned-tags-pr6
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: echo "[]" > scanned-tags.json
+      - id: fetch
+        run: |
+          dockerApiToken="$(curl --silent --get --data-urlencode service=registry.docker.io --data-urlencode scope=repository:fischerscode/flutter:pull https://auth.docker.io/token | jq --raw-output '.token')"
+          curl --silent --get -H "Accept: application/json" -H "Authorization: Bearer $dockerApiToken" https://registry-1.docker.io/v2/fischerscode/flutter/tags/list | jq '.tags' > dockerhub-tags.json
+          tag=$(jq --argfile s scanned-tags.json --argfile d dockerhub-tags.json -n '$d | map(select(. as $tag | $s | any(. == $tag) | not)) | first')
+          echo "::set-output name=tag::$tag"
+      - name: setup buildx
+        uses: docker/setup-buildx-action@v1.3.0
+        with:
+          install: true
+      - name: pull image
+        run: docker pull fischerscode/flutter:${{ steps.fetch.outputs.tag }}
+      - name: Check if the image is invalid
+        id: invalid
+        run: |
+          invalid=$(docker run fischerscode/flutter:${{ steps.fetch.outputs.tag }} flutter doctor | jq -sR 'contains("0.0.0-unknown")')
+          echo "::set-output name=invalid::$invalid"
+      - name: Login to Docker Hub
+        if: steps.invalid.outputs.invalid == 'true'
+        uses: docker/login-action@v1.9.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push image
+        if: steps.invalid.outputs.invalid == 'true'
+        run: |
+          docker build \
+            -t fischerscode/flutter:${{ steps.fetch.outputs.tag }} \
+            --build-arg=flutterVersion=${{ steps.fetch.outputs.tag }} \
+            --cache-from=type=registry,ref=fischerscode/flutter-cache:${{ steps.fetch.outputs.tag }} \
+            --cache-to=type=registry,ref=fischerscode/flutter-cache:${{ steps.fetch.outputs.tag }},mode=max \
+            --push \
+            --platform linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x \
+            .
