@@ -1,4 +1,4 @@
-name: Scan for invalid builds (pr6)
+name: Scan for invalid builds
 
 on:
   schedule:
@@ -6,18 +6,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  scan:
+  pr6:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Cache Tags
-        id: cache
-        uses: actions/cache@v2
+      - run: echo "[]" > scanned-tags.json
+      - name: Download scanned-tags
+        uses: actions/download-artifact@v2
         with:
-          path: scanned-tags.json
-          key: scanned-tags-pr6
-      - if: steps.cache.outputs.cache-hit != 'true'
-        run: echo "[]" > scanned-tags.json
+          name: scanned-tags
+      - run: mv scanned-tags/scanned-tags.json scanned-tags.json
       - id: fetch
         run: |
           dockerApiToken="$(curl --silent --get --data-urlencode service=registry.docker.io --data-urlencode scope=repository:fischerscode/flutter:pull https://auth.docker.io/token | jq --raw-output '.token')"
@@ -66,5 +64,5 @@ jobs:
       - name: Upload tags as artifact
         uses: actions/upload-artifact@v2
         with:
-          name: scanned-tags.json
+          name: scanned-tags
           path: scanned-tags.json
