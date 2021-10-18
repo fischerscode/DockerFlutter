@@ -9,7 +9,7 @@ jobs:
   pr6:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.3.5
       - run: echo "[]" > scanned-tags.json
       - run: echo "[]" > rebuild-tags.json
       - name: Download scanned-tags
