@@ -1,0 +1,12 @@
+ARG flutterTag=stable
+
+FROM --platform=$BUILDPLATFORM fischerscode/flutter:$flutterTag
+
+USER root:root
+RUN apt-get update && apt-get install -y sudo && \
+    echo "flutter ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/flutter && \
+    chmod 0440 /etc/sudoers.d/flutter && \
+    rm -rf /var/lib/apt/lists/*
+USER flutter:flutter
+
+RUN flutter doctor && sudo echo "WORKS"

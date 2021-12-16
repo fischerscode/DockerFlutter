@@ -54,3 +54,12 @@ jobs:
             --push \
             --platform linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x \
             .
+      - name: Build and push sudo image
+        run: |
+          docker build \
+            -t fischerscode/flutter-sudo:$(echo ${{ join(matrix.tags, ' | tr + _) -t fischerscode/flutter-sudo:$(echo ') }} | tr + _) \
+            --build-arg=flutterVersion=${{ matrix.channel }} \
+            --push \
+            --platform linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x \
+            -f Dockerfile.sudo \
+            .
