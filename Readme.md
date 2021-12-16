@@ -1,12 +1,14 @@
 # A Docker image for doing Flutter stuff
 
 [![Build Branches](https://github.com/fischerscode/DockerFlutter/actions/workflows/build_updates.yaml/badge.svg)](https://github.com/fischerscode/DockerFlutter/actions/workflows/build_updates.yaml)
-[![docker pulls](https://img.shields.io/docker/pulls/fischerscode/flutter)](https://hub.docker.com/r/fischerscode/flutter)
-[![docker pulls sudo image](https://img.shields.io/docker/pulls/fischerscode/flutter-sudo)](https://hub.docker.com/r/fischerscode/flutter-sudo)
 
 This repository builds ubuntu based docker images containing the flutter executable.
-- [fischerscode/flutter](https://hub.docker.com/r/fischerscode/flutter): The recommended image.
+- [fischerscode/flutter](https://hub.docker.com/r/fischerscode/flutter): The recommended image. 
+  
+  [![docker pulls](https://img.shields.io/docker/pulls/fischerscode/flutter)](https://hub.docker.com/r/fischerscode/flutter)
 - [fischerscode/flutter-sudo](https://hub.docker.com/r/fischerscode/flutter-sudo): The user flutter is allowed to run sudo.
+  
+  [![docker pulls sudo image](https://img.shields.io/docker/pulls/fischerscode/flutter-sudo)](https://hub.docker.com/r/fischerscode/flutter-sudo)
 
 One use case for this image is the build of Flutter Web Applications.
 
