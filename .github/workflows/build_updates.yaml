@@ -12,7 +12,7 @@ jobs:
       matrix: ${{ steps.fetch-refs.outputs.matrix }}
       empty_matrix: ${{ steps.check-matrix.outputs.empty_matrix }}
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           repository: flutter/flutter
@@ -34,7 +34,7 @@ jobs:
       matrix: ${{fromJson(needs.fetch-branches.outputs.matrix)}}
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - name: setup buildx
         uses: docker/setup-buildx-action@v1.6.0
         with:
