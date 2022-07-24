@@ -12,5 +12,6 @@
     "1.21.0-5.0.pre",
     "dependabot/github_actions/dessant/lock-threads-3",
     "roll_deps",
-    "dependabot/docker/dev/ci/docker_linux/debian-bullseye-20220509-slim"
+    "dependabot/docker/dev/ci/docker_linux/debian-bullseye-20220509-slim",
+    "dependabot/docker/dev/ci/docker_linux/debian-11.4-slim"
 ]
