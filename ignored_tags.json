@@ -13,5 +13,12 @@
     "dependabot/github_actions/dessant/lock-threads-3",
     "roll_deps",
     "dependabot/docker/dev/ci/docker_linux/debian-bullseye-20220509-slim",
-    "dependabot/docker/dev/ci/docker_linux/debian-11.4-slim"
+    "dependabot/docker/dev/ci/docker_linux/debian-11.4-slim",
+    "bdero/runtime-effect-include",
+    "dependabot/github_actions/github/codeql-action-2.2.10",
+    "inject_base_href",
+    "revert-110502-issues/109465",
+    "revert-115187-tae/sentence-case",
+    "revert-117547-issues/117479",
+    "revert-122233-issues/117481"
 ]
