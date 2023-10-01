@@ -22,5 +22,6 @@ RUN flutter-sdk/bin/flutter config --no-analytics
 
 ENV PATH="$PATH:/home/flutter/flutter-sdk/bin"
 ENV PATH="$PATH:/home/flutter/flutter-sdk/bin/cache/dart-sdk/bin"
+ENV PATH="$PATH:/home/flutter/.pub-cache/bin"
 
 RUN flutter doctor
