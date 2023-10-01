@@ -28,5 +28,7 @@
     "revert-127456-feat/buggy-network-image",
     "revert-135537-revert-135255-aot-frontend-server",
     "dependabot/github_actions/github/codeql-action-2.21.9",
+    "dependabot/github_actions/actions/checkout-4.1.0",
+    "flutter-3.16-candidate.0",
     "dependabot/github_actions/actions/checkout-4.1.0"
 ]
