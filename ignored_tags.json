@@ -20,5 +20,13 @@
     "revert-110502-issues/109465",
     "revert-115187-tae/sentence-case",
     "revert-117547-issues/117479",
-    "revert-122233-issues/117481"
+    "revert-122233-issues/117481",
+    "dependabot/github_actions/actions/checkout-4.1.0",
+    "dependabot/github_actions/github/codeql-action-2.21.9",
+    "flutter-3.14-candidate.9",
+    "flutter-3.14-candidate.10",
+    "revert-127456-feat/buggy-network-image",
+    "revert-135537-revert-135255-aot-frontend-server",
+    "dependabot/github_actions/github/codeql-action-2.21.9",
+    "dependabot/github_actions/actions/checkout-4.1.0"
 ]
