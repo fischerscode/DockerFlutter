@@ -1,5 +1,5 @@
 # This is needed for really old tags
-FROM --platform=$BUILDPLATFORM ubuntu:20.04
+FROM --platform=$BUILDPLATFORM ubuntu:22.04
 
 RUN apt-get update
 

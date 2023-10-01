@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM ubuntu:20.04
+FROM --platform=$BUILDPLATFORM ubuntu:22.04
 
 RUN apt-get update && \
     apt-get install -y bash curl file git unzip xz-utils zip libglu1-mesa cmake && \
