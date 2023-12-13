@@ -13,7 +13,7 @@ jobs:
       - run: echo "[]" > scanned-tags.json
       - run: echo "[]" > rebuild-tags.json
       - name: Download scanned-tags
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v3
         continue-on-error: true
         with:
           workflow: scan_images.yaml
