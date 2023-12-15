@@ -20,7 +20,7 @@ jobs:
           name: pr6
           path: .
       # - name: Initiate tags artifact
-      #   uses: actions/upload-artifact@v3
+      #   uses: actions/upload-artifact@v4
       #   if: failure()
       #   with:
       #     name: scanned-tags
@@ -69,7 +69,7 @@ jobs:
         if: steps.fetch.outputs.tag != 'null' && steps.invalid.outputs.invalid == 'true'
         run: echo $(cat rebuild-tags.json | jq '. += [${{ steps.fetch.outputs.tag }}]') > rebuild-tags.json
       - name: Upload tags as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pr6
           path: |
